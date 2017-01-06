@@ -2,7 +2,7 @@ package net.dankito.android.util;
 
 import android.app.Activity;
 
-import net.danktio.utils.IOnUiThreadRunner;
+import net.dankito.utils.IOnUiThreadRunner;
 
 /**
  * Created by ganymed on 03/11/16.

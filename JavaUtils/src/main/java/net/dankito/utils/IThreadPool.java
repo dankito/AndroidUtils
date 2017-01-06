@@ -1,4 +1,4 @@
-package net.danktio.utils;
+package net.dankito.utils;
 
 /**
  * Created by ganymed on 03/11/16.
