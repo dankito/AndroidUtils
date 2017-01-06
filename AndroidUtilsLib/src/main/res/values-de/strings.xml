@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">AndroidUtils</string>
+
+    <string name="alert_message_cancel_download">Download von %s abbrechen?</string>
+</resources>
