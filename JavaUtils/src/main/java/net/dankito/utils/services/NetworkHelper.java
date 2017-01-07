@@ -79,7 +79,7 @@ public class NetworkHelper {
     try {
       List<NetworkInterface> interfaces = Collections.list(NetworkInterface.getNetworkInterfaces());
       for(NetworkInterface anInterface : interfaces) {
-        if(anInterface.isLoopback() || anInterface.isUp() == false) { // e.g. Docker Network Interface has an IP Address but isUp() == false
+        if(anInterface.isLoopback() || anInterface.isUp() == false || anInterface.getName().startsWith("docker")) {
           continue;
         }
 
