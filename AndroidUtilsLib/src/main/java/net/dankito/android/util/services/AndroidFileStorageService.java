@@ -2,72 +2,34 @@ package net.dankito.android.util.services;
 
 import android.content.Context;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import net.dankito.utils.services.JavaFileStorageService;
 
-import net.dankito.utils.services.IFileStorageService;
-
-import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
+import java.io.OutputStream;
 
 /**
  * Created by ganymed on 26/11/16.
  */
 
-public class AndroidFileStorageService implements IFileStorageService {
+public class AndroidFileStorageService extends JavaFileStorageService {
 
   protected Context context;
-
-  protected ObjectMapper mapper = new ObjectMapper();
 
 
   public AndroidFileStorageService(Context context) {
     this.context = context;
-
-    mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
   }
 
 
-  public void writeObjectToFile(Object object, String filename) throws Exception {
-    String json = mapper.writeValueAsString(object);
-    writeToFile(json, filename);
+  @Override
+  protected OutputStream createFileOutputStream(String filename) throws FileNotFoundException {
+    return context.openFileOutput(filename, Context.MODE_PRIVATE);
   }
 
-  public void writeToFile(String fileContent, String filename) throws Exception {
-    OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput(filename, Context.MODE_PRIVATE));
-    outputStreamWriter.write(fileContent);
-    outputStreamWriter.close();
-  }
-
-
-  public <T> T readObjectFromFile(String filename, Class<T> objectClass) throws Exception {
-    String json = readFromFile(filename);
-
-    return mapper.readValue(json, objectClass);
-  }
-
-  public String readFromFile(String filename) throws Exception {
-    String fileContent = "";
-
-    InputStream inputStream = context.openFileInput(filename);
-
-    if(inputStream != null) {
-      InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-      BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-      String receiveString = "";
-      StringBuilder stringBuilder = new StringBuilder();
-
-      while ( (receiveString = bufferedReader.readLine()) != null ) {
-        stringBuilder.append(receiveString);
-      }
-
-      inputStream.close();
-      fileContent = stringBuilder.toString();
-    }
-
-    return fileContent;
+  @Override
+  protected InputStream createFileInputStream(String filename) throws FileNotFoundException {
+    return context.openFileInput(filename);
   }
 
 }
