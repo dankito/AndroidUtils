@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -70,5 +71,22 @@ public class JavaFileStorageService implements IFileStorageService {
   protected InputStream createFileInputStream(String filename) throws FileNotFoundException {
     return new FileInputStream(filename);
   }
+
+
+  @Override
+  public void deleteFolderRecursively(String path) {
+    deleteRecursively(new File(path));
+  }
+
+  protected void deleteRecursively(File file) {
+    if(file.isDirectory()) {
+      for(File containingFile : file.listFiles()) {
+        deleteRecursively(containingFile);
+      }
+    }
+
+    file.delete();
+  }
+
 
 }

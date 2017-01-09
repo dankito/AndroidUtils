@@ -15,4 +15,7 @@ public interface IFileStorageService {
 
   String readFromFile(String filename) throws Exception;
 
+
+  void deleteFolderRecursively(String path);
+
 }
