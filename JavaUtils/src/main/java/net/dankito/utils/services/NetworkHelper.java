@@ -78,12 +78,12 @@ public class NetworkHelper {
 
     try {
       List<NetworkInterface> interfaces = Collections.list(NetworkInterface.getNetworkInterfaces());
-      for(NetworkInterface anInterface : interfaces) {
-        if(anInterface.isLoopback() || anInterface.isUp() == false || anInterface.getName().startsWith("docker")) {
+      for(NetworkInterface networkInterface : interfaces) {
+        if(shouldInterfaceBeIgnored(networkInterface)) {
           continue;
         }
 
-        List<InetAddress> interfaceAddresses = Collections.list(anInterface.getInetAddresses());
+        List<InetAddress> interfaceAddresses = Collections.list(networkInterface.getInetAddresses());
 
         for(InetAddress address : interfaceAddresses) {
           if(address.isLoopbackAddress() == false) {
@@ -96,6 +96,23 @@ public class NetworkHelper {
     } catch (Exception ignored) { } // for now eat exceptions
 
     return addresses;
+  }
+
+  protected boolean shouldInterfaceBeIgnored(NetworkInterface networkInterface) throws SocketException {
+    return networkInterface.isLoopback() || networkInterface.isUp() == false || isCellularOrUsbInterface(networkInterface) ||
+        isDockerInterface(networkInterface) || isDummyInterface(networkInterface);
+  }
+
+  protected boolean isCellularOrUsbInterface(NetworkInterface networkInterface) {
+    return networkInterface.getName().startsWith("rmnet"); // see for example https://stackoverflow.com/a/33748594
+  }
+
+  protected boolean isDockerInterface(NetworkInterface networkInterface) {
+    return networkInterface.getName().startsWith("docker");
+  }
+
+  protected boolean isDummyInterface(NetworkInterface networkInterface) {
+    return networkInterface.getName().startsWith("dummy");
   }
 
   // TODO: try to get rid of this method as it's not reliable (see above)
