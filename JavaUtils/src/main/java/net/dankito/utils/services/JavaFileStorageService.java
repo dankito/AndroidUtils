@@ -26,10 +26,10 @@ public class JavaFileStorageService implements IFileStorageService {
 
   public void writeObjectToFile(Object object, String filename) throws Exception {
     String json = mapper.writeValueAsString(object);
-    writeToFile(json, filename);
+    writeToTextFile(json, filename);
   }
 
-  public void writeToFile(String fileContent, String filename) throws Exception {
+  public void writeToTextFile(String fileContent, String filename) throws Exception {
     OutputStreamWriter outputStreamWriter = new OutputStreamWriter(createFileOutputStream(filename));
     outputStreamWriter.write(fileContent);
     outputStreamWriter.close();
