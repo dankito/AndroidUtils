@@ -13,7 +13,7 @@ public interface IFileStorageService {
 
   <T> T readObjectFromFile(String filename, Class<T> objectClass) throws Exception;
 
-  String readFromFile(String filename) throws Exception;
+  String readFromTextFile(String filename) throws Exception;
 
 
   void deleteFolderRecursively(String path);

@@ -147,7 +147,7 @@ public class NotificationsService {
 
   protected void loadCurrentlyShowingNotifications() {
     try {
-      String json = fileStorageService.readFromFile(CURRENTLY_SHOWING_NOTIFICATIONS_FILENAME);
+      String json = fileStorageService.readFromTextFile(CURRENTLY_SHOWING_NOTIFICATIONS_FILENAME);
       ObjectMapper mapper = new ObjectMapper();
       mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 

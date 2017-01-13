@@ -41,12 +41,12 @@ public class JavaFileStorageService implements IFileStorageService {
 
 
   public <T> T readObjectFromFile(String filename, Class<T> objectClass) throws Exception {
-    String json = readFromFile(filename);
+    String json = readFromTextFile(filename);
 
     return mapper.readValue(json, objectClass);
   }
 
-  public String readFromFile(String filename) throws Exception {
+  public String readFromTextFile(String filename) throws Exception {
     String fileContent = "";
 
     InputStream inputStream = createFileInputStream(filename);
