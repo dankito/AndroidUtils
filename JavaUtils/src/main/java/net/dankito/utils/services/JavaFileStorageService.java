@@ -35,6 +35,13 @@ public class JavaFileStorageService implements IFileStorageService {
     outputStreamWriter.close();
   }
 
+  @Override
+  public void writeToBinaryFile(byte[] fileContent, String filename) throws Exception {
+    OutputStream outputStream = createFileOutputStream(filename);
+    outputStream.write(fileContent);
+    outputStream.close();
+  }
+
   protected OutputStream createFileOutputStream(String filename) throws FileNotFoundException {
     return new FileOutputStream(filename);
   }
@@ -66,6 +73,17 @@ public class JavaFileStorageService implements IFileStorageService {
     }
 
     return fileContent;
+  }
+
+  @Override
+  public byte[] readFromBinaryFile(String filename) throws Exception {
+    InputStream inputStream = createFileInputStream(filename);
+
+    if(inputStream != null) {
+      return new InputStreamHelper().readDataFromInputStream(inputStream);
+    }
+
+    return null;
   }
 
   protected InputStream createFileInputStream(String filename) throws FileNotFoundException {
