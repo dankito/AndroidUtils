@@ -13,7 +13,10 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 
+import javax.inject.Named;
 
+
+@Named
 public class JavaFileStorageService implements IFileStorageService {
 
   protected ObjectMapper mapper = new ObjectMapper();

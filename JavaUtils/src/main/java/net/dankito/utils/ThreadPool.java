@@ -3,10 +3,10 @@ package net.dankito.utils;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-/**
- * Created by ganymed on 03/11/16.
- */
+import javax.inject.Named;
 
+
+@Named
 public class ThreadPool implements IThreadPool {
 
   protected ExecutorService executorService = Executors.newCachedThreadPool();

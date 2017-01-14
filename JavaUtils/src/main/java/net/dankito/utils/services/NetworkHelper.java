@@ -11,9 +11,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * Created by ganymed on 19/08/15.
- */
+import javax.inject.Named;
+
+
+@Named
 public class NetworkHelper {
 
   private static final Logger log = LoggerFactory.getLogger(NetworkHelper.class);

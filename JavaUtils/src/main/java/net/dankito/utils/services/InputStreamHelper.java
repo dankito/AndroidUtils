@@ -6,7 +6,10 @@ import org.slf4j.LoggerFactory;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 
+import javax.inject.Named;
 
+
+@Named
 public class InputStreamHelper {
 
   public static final byte[] COULD_NOT_READ_FROM_INPUT_STREAM = new byte[0];
