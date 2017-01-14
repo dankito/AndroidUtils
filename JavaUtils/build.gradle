@@ -9,5 +9,7 @@ dependencies {
     compile 'com.squareup.okhttp:okhttp:2.5.0'
     compile 'com.fasterxml.jackson.core:jackson-databind:2.8.5'
 
+    compile 'javax.inject:javax.inject:1'
+
     testCompile 'junit:junit:4.12'
 }
