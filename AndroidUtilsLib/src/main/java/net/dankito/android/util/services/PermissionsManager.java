@@ -9,6 +9,8 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -19,7 +21,7 @@ public class PermissionsManager implements IPermissionsManager {
 
   protected int nextRequestCode = 27388;
 
-  protected Map<Integer, PermissionRequestCallback> pendingPermissionRequests = new ConcurrentHashMap<>();
+  protected Map<String, List<PermissionRequestCallback>> pendingPermissionRequests = new ConcurrentHashMap<>();
 
 
   public PermissionsManager(Activity activity) {
@@ -39,11 +41,19 @@ public class PermissionsManager implements IPermissionsManager {
    */
   @Override
   public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-    PermissionRequestCallback callback = pendingPermissionRequests.remove(requestCode);
-    if(callback != null) {
+    String permission = permissions[0];
+    List<PermissionRequestCallback> callbacks = null;
+
+    synchronized(pendingPermissionRequests) {
+      callbacks = pendingPermissionRequests.remove(permission);
+    }
+
+    if(callbacks != null) {
       if(permissions != null && permissions.length > 0 && grantResults != null && grantResults.length > 0) {
         boolean permissionGranted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
-        callback.permissionCheckDone(permissions[0], permissionGranted);
+        for(PermissionRequestCallback callback : callbacks) {
+          callback.permissionCheckDone(permission, permissionGranted);
+        }
       }
     }
   }
@@ -164,12 +174,22 @@ public class PermissionsManager implements IPermissionsManager {
    * @param callback The callback being called when determined if permission is granted or not.
    */
   protected void requestPermissionFromUser(String permission, PermissionRequestCallback callback) {
-    int requestCode = nextRequestCode++;
-    pendingPermissionRequests.put(requestCode, callback);
+    synchronized(pendingPermissionRequests) {
+      if(pendingPermissionRequests.containsKey(permission)) { // there's already a pending requestPermissions() call for this permission -> don't ask again, add to pending permissions
+        pendingPermissionRequests.get(permission).add(callback);
+      }
+      else {
+        int requestCode = nextRequestCode++;
 
-    ActivityCompat.requestPermissions(activity,
-        new String[] { permission },
-        requestCode);
+        List<PermissionRequestCallback> callbacksForPermission = new ArrayList<>();
+        callbacksForPermission.add(callback);
+        pendingPermissionRequests.put(permission, callbacksForPermission);
+
+        ActivityCompat.requestPermissions(activity,
+            new String[] { permission },
+            requestCode);
+      }
+    }
   }
 
 }
