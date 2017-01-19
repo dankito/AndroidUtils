@@ -7,7 +7,7 @@ public interface IPermissionsManager {
 
   /**
    * <p>
-   *  To be called from {@link #activity}.
+   *  To be called from the Activity passed as parameter to PermissionManager's constructor.
    *  Simple pass all parameters passed to Activity's onRequestPermissionsResult() to this method.
    * </p>
    *
