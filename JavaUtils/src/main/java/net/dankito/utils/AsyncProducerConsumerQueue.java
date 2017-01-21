@@ -54,7 +54,7 @@ public class AsyncProducerConsumerQueue<T> {
       try { consumerThread.join(100); } catch(Exception ignored) { }
     }
 
-    // TODO: really consume remaining items even though cleanUp() has already been called?
+    // TODO: really consume remaining items even though stop() has already been called?
     for(T item : remainingItemsInQueue) {
       consumeItem(item);
     }
