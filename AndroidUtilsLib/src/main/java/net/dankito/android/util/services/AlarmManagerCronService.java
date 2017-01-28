@@ -40,14 +40,19 @@ public class AlarmManagerCronService implements ICronService {
   }
 
   public AlarmManagerCronService(Context context) {
+    this(context, 0);
+  }
+
+  public AlarmManagerCronService(Context context, int nextCronJobTokenNumberSeed) {
     this.context = context;
+    NextCronJobTokenNumber = nextCronJobTokenNumberSeed;
   }
 
 
 
   public int scheduleOneTimeJob(OneTimeJobConfig config) {
     AlarmManager alarmManager = getAlarmManager();
-    int tokenNumber = NextCronJobTokenNumber++;
+    int tokenNumber = ++NextCronJobTokenNumber;
 
     Intent intent = new Intent(context, config.getClassThatReceivesBroadcastWhenPeriodElapsed());
     intent.putExtra(CRON_JOB_TOKEN_NUMBER_EXTRA_NAME, tokenNumber);
@@ -96,7 +101,7 @@ public class AlarmManagerCronService implements ICronService {
     calendar.set(Calendar.SECOND, 0);
 
     AlarmManager alarmManager = getAlarmManager();
-    int tokenNumber = NextCronJobTokenNumber++;
+    int tokenNumber = ++NextCronJobTokenNumber;
 
     Intent intent = new Intent(context, classThatReceivesBroadcastWhenPeriodElapsed);
     intent.putExtra(CRON_JOB_TOKEN_NUMBER_EXTRA_NAME, tokenNumber);
