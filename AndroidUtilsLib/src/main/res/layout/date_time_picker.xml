@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="8dp"
+    >
+
+    <LinearLayout
+                  android:orientation="vertical"
+                  android:layout_width="match_parent"
+                  android:layout_height="match_parent"
+                  android:padding="8dp"
+    >
+
+        <DatePicker
+            android:id="@+id/date_picker"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:calendarViewShown="true"
+            android:spinnersShown="false"
+        />
+
+        <net.dankito.android.util.controls.TimePickerInScrollView
+            android:id="@+id/time_picker"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+        />
+
+        <Button
+            android:id="@+id/btnDateTimeSelected"
+            android:layout_width="@dimen/button_date_time_selected_width"
+            android:layout_height="@dimen/button_date_time_selected_height"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/button_date_time_selected_margin_top"
+            android:text="@string/select"
+        />
+
+    </LinearLayout>
+
+</ScrollView>
