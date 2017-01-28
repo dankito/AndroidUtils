@@ -9,6 +9,8 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 
+import net.dankito.android.util.AndroidOnUiThreadRunner;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -90,7 +92,21 @@ public class PermissionsManager implements IPermissionsManager {
    * @param callback The callback being called when determined if permission is granted or not.
    */
   @Override
-  public void checkPermission(String permission, String rationaleToShowToUser, PermissionRequestCallback callback) {
+  public void checkPermission(final String permission, final String rationaleToShowToUser, final PermissionRequestCallback callback) {
+    if(AndroidOnUiThreadRunner.isRunningOnUiThread() == false) {
+      checkPermissionOnNonUiThread(permission, rationaleToShowToUser, callback);
+    }
+    else {
+      new Thread(new Runnable() {
+        @Override
+        public void run() {
+          checkPermissionOnNonUiThread(permission, rationaleToShowToUser, callback);
+        }
+      }).start();
+    }
+  }
+
+  protected void checkPermissionOnNonUiThread(String permission, String rationaleToShowToUser, PermissionRequestCallback callback) {
     if(isPermissionGranted(permission)) {
       callback.permissionCheckDone(permission, true);
     }
@@ -113,12 +129,17 @@ public class PermissionsManager implements IPermissionsManager {
    */
   @Override
   public void checkPermissions(final String[] permissions, final String[] rationalesToShowToUser, final MultiplePermissionsRequestCallback callback) {
-    new Thread(new Runnable() {
-      @Override
-      public void run() {
-        checkPermissionsInNewThread(permissions, rationalesToShowToUser, callback);
-      }
-    }).start();
+    if(AndroidOnUiThreadRunner.isRunningOnUiThread() == false) {
+      checkPermissionsOnNonUiThread(permissions, rationalesToShowToUser, callback);
+    }
+    else {
+      new Thread(new Runnable() {
+        @Override
+        public void run() {
+          checkPermissionsOnNonUiThread(permissions, rationalesToShowToUser, callback);
+        }
+      }).start();
+    }
   }
 
   /**
@@ -127,7 +148,7 @@ public class PermissionsManager implements IPermissionsManager {
    * @param rationalesToShowToUser
    * @param callback
    */
-  protected void checkPermissionsInNewThread(String[] permissions, String[] rationalesToShowToUser, final MultiplePermissionsRequestCallback callback) {
+  protected void checkPermissionsOnNonUiThread(String[] permissions, String[] rationalesToShowToUser, final MultiplePermissionsRequestCallback callback) {
     final Map<String, Boolean> permissionResults = new ConcurrentHashMap<>();
     final CountDownLatch countDownLatch = new CountDownLatch(permissions.length);
 
