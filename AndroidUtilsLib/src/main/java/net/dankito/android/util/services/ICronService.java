@@ -2,6 +2,8 @@ package net.dankito.android.util.services;
 
 import android.content.BroadcastReceiver;
 
+import net.dankito.android.util.model.OneTimeJobConfig;
+
 import java.util.Calendar;
 
 /**
@@ -9,6 +11,8 @@ import java.util.Calendar;
  */
 
 public interface ICronService {
+
+  int scheduleOneTimeJob(OneTimeJobConfig config);
 
   int startPeriodicalJob(long periodicalCheckTimeMillis, Class<? extends BroadcastReceiver> classThatReceivesBroadcastWhenPeriodElapsed);
 
