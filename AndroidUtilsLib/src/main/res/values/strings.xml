@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">AndroidUtils</string>
-
     <string name="alert_message_cancel_download">Cancel download of %s?</string>
+
+    <string name="select">Select</string>
 </resources>
