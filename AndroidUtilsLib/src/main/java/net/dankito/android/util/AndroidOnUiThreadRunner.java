@@ -1,6 +1,7 @@
 package net.dankito.android.util;
 
 import android.app.Activity;
+import android.os.Looper;
 
 import net.dankito.utils.IOnUiThreadRunner;
 
@@ -21,6 +22,11 @@ public class AndroidOnUiThreadRunner implements IOnUiThreadRunner {
   @Override
   public void runOnUiThread(Runnable task) {
     activity.runOnUiThread(task);
+  }
+
+
+  public static boolean isRunningOnUiThread() {
+    return Looper.getMainLooper().getThread() == Thread.currentThread();
   }
 
 }

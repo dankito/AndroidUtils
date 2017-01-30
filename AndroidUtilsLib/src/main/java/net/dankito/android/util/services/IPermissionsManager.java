@@ -46,6 +46,20 @@ public interface IPermissionsManager {
   void checkPermission(String permission, String rationaleToShowToUser, PermissionRequestCallback callback);
 
   /**
+   * <p>
+   *  Checks for each permission first if the {@code permission} is granted. If so, returns immediately.
+   * </p>
+   * <p>
+   *  If not, checks if permission has been requested before. If so, User has to be shown a rationale why she/he's being re-asked.<br/>
+   *  If permission has never been requested before or User allows re-requesting it, a permission request will be passed on to User.
+   * </p>
+   * @param permissions A value from {@link Manifest.permission}
+   * @param rationalesToShowToUser The rationales shown to User before re-requesting permission.
+   * @param callback The callback being called when determined if permission is granted or not.
+   */
+  void checkPermissions(String[] permissions, String[] rationalesToShowToUser, MultiplePermissionsRequestCallback callback);
+
+  /**
    *  Checks if a permission is already granted.
    *
    * @param permission A value from {@link Manifest.permission}

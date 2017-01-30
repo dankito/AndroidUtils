@@ -9,10 +9,13 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 
+import net.dankito.android.util.AndroidOnUiThreadRunner;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CountDownLatch;
 
 
 public class PermissionsManager implements IPermissionsManager {
@@ -89,13 +92,87 @@ public class PermissionsManager implements IPermissionsManager {
    * @param callback The callback being called when determined if permission is granted or not.
    */
   @Override
-  public void checkPermission(String permission, String rationaleToShowToUser, PermissionRequestCallback callback) {
+  public void checkPermission(final String permission, final String rationaleToShowToUser, final PermissionRequestCallback callback) {
+    if(AndroidOnUiThreadRunner.isRunningOnUiThread() == false) {
+      checkPermissionOnNonUiThread(permission, rationaleToShowToUser, callback);
+    }
+    else {
+      new Thread(new Runnable() {
+        @Override
+        public void run() {
+          checkPermissionOnNonUiThread(permission, rationaleToShowToUser, callback);
+        }
+      }).start();
+    }
+  }
+
+  protected void checkPermissionOnNonUiThread(String permission, String rationaleToShowToUser, PermissionRequestCallback callback) {
     if(isPermissionGranted(permission)) {
       callback.permissionCheckDone(permission, true);
     }
     else {
       requestPermission(permission, rationaleToShowToUser, callback);
     }
+  }
+
+  /**
+   * <p>
+   *  Checks for each permission first if the {@code permission} is granted. If so, returns immediately.
+   * </p>
+   * <p>
+   *  If not, checks if permission has been requested before. If so, User has to be shown a rationale why she/he's being re-asked.<br/>
+   *  If permission has never been requested before or User allows re-requesting it, a permission request will be passed on to User.
+   * </p>
+   * @param permissions A value from {@link Manifest.permission}
+   * @param rationalesToShowToUser The rationales shown to User before re-requesting permission.
+   * @param callback The callback being called when determined if permission is granted or not.
+   */
+  @Override
+  public void checkPermissions(final String[] permissions, final String[] rationalesToShowToUser, final MultiplePermissionsRequestCallback callback) {
+    if(AndroidOnUiThreadRunner.isRunningOnUiThread() == false) {
+      checkPermissionsOnNonUiThread(permissions, rationalesToShowToUser, callback);
+    }
+    else {
+      new Thread(new Runnable() {
+        @Override
+        public void run() {
+          checkPermissionsOnNonUiThread(permissions, rationalesToShowToUser, callback);
+        }
+      }).start();
+    }
+  }
+
+  /**
+   * countDownLatch.await() blocks current thread -> do not block calling thread
+   * @param permissions
+   * @param rationalesToShowToUser
+   * @param callback
+   */
+  protected void checkPermissionsOnNonUiThread(String[] permissions, String[] rationalesToShowToUser, final MultiplePermissionsRequestCallback callback) {
+    final Map<String, Boolean> permissionResults = new ConcurrentHashMap<>();
+    final CountDownLatch countDownLatch = new CountDownLatch(permissions.length);
+
+    for(int i = 0; i < permissions.length; i++) {
+      String permission = permissions[i];
+
+      if(isPermissionGranted(permission)) {
+        permissionResults.put(permission, true);
+        countDownLatch.countDown();
+      }
+      else {
+        requestPermission(permission, rationalesToShowToUser[i], new PermissionRequestCallback() {
+          @Override
+          public void permissionCheckDone(String permission, boolean isGranted) {
+            permissionResults.put(permission, isGranted);
+            countDownLatch.countDown();
+          }
+        });
+      }
+    }
+
+    try { countDownLatch.await(); } catch(Exception ignored) { }
+
+    callback.permissionsCheckDone(permissionResults);
   }
 
   /**
