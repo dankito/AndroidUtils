@@ -118,7 +118,7 @@ public class AlarmManagerCronService implements ICronService {
   }
 
 
-  public boolean cancelPeriodicalJob(int cronJobTokenNumber) {
+  public boolean cancelJob(int cronJobTokenNumber) {
     log.info("Trying to cancel cron job with token number " + cronJobTokenNumber);
     PendingIntent pendingIntent = startedJobs.remove(cronJobTokenNumber);
 

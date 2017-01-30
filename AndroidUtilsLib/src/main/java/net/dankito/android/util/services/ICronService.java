@@ -18,6 +18,6 @@ public interface ICronService {
 
   int startPeriodicalJob(Calendar startTime, long intervalMillis, Class<? extends BroadcastReceiver> classThatReceivesBroadcastWhenPeriodElapsed);
 
-  boolean cancelPeriodicalJob(int cronJobTokenNumber);
+  boolean cancelJob(int cronJobTokenNumber);
 
 }
