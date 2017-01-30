@@ -3,6 +3,7 @@ package net.dankito.android.util.services;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
@@ -267,6 +268,17 @@ public class PermissionsManager implements IPermissionsManager {
             requestCode);
       }
     }
+  }
+
+
+  /**
+   * Static version in case no Activity instance is available.
+   * @param context
+   * @param permission
+   * @return
+   */
+  public static boolean isPermissionGranted(Context context, String permission) {
+    return PackageManager.PERMISSION_GRANTED == context.checkPermission(permission, android.os.Process.myPid(), android.os.Process.myUid());
   }
 
 }
