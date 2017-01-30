@@ -6,6 +6,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
+import net.dankito.android.util.model.OneTimeJobConfig;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class AlarmManagerCronService implements ICronService {
 
-  protected static final String CRON_JOB_TOKEN_NUMBER_EXTRA_NAME = "CronJobTokenNumber";
+  public static final String CRON_JOB_TOKEN_NUMBER_EXTRA_NAME = "CronJobTokenNumber";
 
   private static final Logger log = LoggerFactory.getLogger(AlarmManagerCronService.class);
 
@@ -38,9 +40,32 @@ public class AlarmManagerCronService implements ICronService {
   }
 
   public AlarmManagerCronService(Context context) {
-    this.context = context;
+    this(context, 0);
   }
 
+  public AlarmManagerCronService(Context context, int nextCronJobTokenNumberSeed) {
+    this.context = context;
+    NextCronJobTokenNumber = nextCronJobTokenNumberSeed;
+  }
+
+
+
+  public int scheduleOneTimeJob(OneTimeJobConfig config) {
+    AlarmManager alarmManager = getAlarmManager();
+    int tokenNumber = ++NextCronJobTokenNumber;
+
+    Intent intent = new Intent(context, config.getClassThatReceivesBroadcastWhenPeriodElapsed());
+    intent.putExtra(CRON_JOB_TOKEN_NUMBER_EXTRA_NAME, tokenNumber);
+    PendingIntent pendingIntent = PendingIntent.getBroadcast(context, tokenNumber, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+    alarmManager.set(AlarmManager.RTC, config.getStartAt().getTimeInMillis(), pendingIntent);
+
+    startedJobs.put(tokenNumber, pendingIntent);
+
+    log.info("Started a one time job with token number " + tokenNumber + " for " + config.getStartAt().getTime());
+
+    return tokenNumber;
+  }
 
   /**
    *
@@ -76,7 +101,7 @@ public class AlarmManagerCronService implements ICronService {
     calendar.set(Calendar.SECOND, 0);
 
     AlarmManager alarmManager = getAlarmManager();
-    int tokenNumber = NextCronJobTokenNumber++;
+    int tokenNumber = ++NextCronJobTokenNumber;
 
     Intent intent = new Intent(context, classThatReceivesBroadcastWhenPeriodElapsed);
     intent.putExtra(CRON_JOB_TOKEN_NUMBER_EXTRA_NAME, tokenNumber);
@@ -93,7 +118,7 @@ public class AlarmManagerCronService implements ICronService {
   }
 
 
-  public boolean cancelPeriodicalJob(int cronJobTokenNumber) {
+  public boolean cancelJob(int cronJobTokenNumber) {
     log.info("Trying to cancel cron job with token number " + cronJobTokenNumber);
     PendingIntent pendingIntent = startedJobs.remove(cronJobTokenNumber);
 
