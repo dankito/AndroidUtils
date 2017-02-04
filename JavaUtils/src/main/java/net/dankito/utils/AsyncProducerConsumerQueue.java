@@ -17,10 +17,12 @@ public class AsyncProducerConsumerQueue<T> {
 
   public static final int WAITING_BEFORE_CONSUMING_ITEM_DISABLED = 0;
 
+  public static final int DEFAULT_MAX_ITEMS_TO_QUEUE = 100;
+
   private static final Logger log = LoggerFactory.getLogger(AsyncProducerConsumerQueue.class);
 
 
-  protected BlockingQueue<T> producedItemsQueue = new LinkedBlockingQueue<>(100); // set capacity to a value that's far above how many concurrent messages
+  protected BlockingQueue<T> producedItemsQueue;
 
   protected ConsumerListener<T> consumerListener;
 
@@ -36,15 +38,21 @@ public class AsyncProducerConsumerQueue<T> {
   }
 
   public AsyncProducerConsumerQueue(int countThreadsToUse, ConsumerListener<T> consumerListener) {
-    this(countThreadsToUse, WAITING_BEFORE_CONSUMING_ITEM_DISABLED, consumerListener);
+    this(countThreadsToUse, DEFAULT_MAX_ITEMS_TO_QUEUE, consumerListener);
   }
 
-  public AsyncProducerConsumerQueue(int countThreadsToUse, int minimumMillisecondsToWaitBeforeConsumingItem, ConsumerListener<T> consumerListener) {
-    this.consumerListener = consumerListener;
+  public AsyncProducerConsumerQueue(int countThreadsToUse, int maxItemsToQueue, ConsumerListener<T> consumerListener) {
+    this(countThreadsToUse, maxItemsToQueue, WAITING_BEFORE_CONSUMING_ITEM_DISABLED, consumerListener);
+  }
+
+  public AsyncProducerConsumerQueue(int countThreadsToUse, int maxItemsToQueue, int minimumMillisecondsToWaitBeforeConsumingItem, ConsumerListener<T> consumerListener) {
+    this.producedItemsQueue = new LinkedBlockingQueue<>(maxItemsToQueue);
     this.minimumMillisecondsToWaitBeforeConsumingItem = minimumMillisecondsToWaitBeforeConsumingItem;
+    this.consumerListener = consumerListener;
 
     startConsumerThreads(countThreadsToUse);
   }
+
 
   public void stop() {
     List<T> remainingItemsInQueue = new ArrayList<>(producedItemsQueue);
