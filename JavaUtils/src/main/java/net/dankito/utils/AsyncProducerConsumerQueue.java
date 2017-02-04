@@ -133,4 +133,8 @@ public class AsyncProducerConsumerQueue<T> {
     return producedItemsQueue.offer(producedItem);
   }
 
+  public int getQueuedItemsCount() {
+    return  producedItemsQueue.size();
+  }
+
 }
