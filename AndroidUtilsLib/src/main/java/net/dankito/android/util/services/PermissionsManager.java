@@ -45,6 +45,10 @@ public class PermissionsManager implements IPermissionsManager {
    */
   @Override
   public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    if(permissions.length == 0) { // unbelievable, on Cyanogen it can happen, that permissions is an empty array
+      return;
+    }
+
     String permission = permissions[0];
     List<PermissionRequestCallback> callbacks = null;
 
