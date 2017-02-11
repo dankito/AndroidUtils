@@ -9,24 +9,24 @@ import android.support.v7.app.AlertDialog;
 
 public class AlertHelper {
 
-  public static void showErrorMessageThreadSafe(final Activity activity, final String errorMessage) {
-    showErrorMessageThreadSafe(activity, errorMessage, null);
+  public static void showMessageThreadSafe(final Activity activity, final String errorMessage) {
+    showMessageThreadSafe(activity, errorMessage, null);
   }
 
-  public static void showErrorMessageThreadSafe(final Activity activity, final String errorMessage, final String alertTitle) {
+  public static void showMessageThreadSafe(final Activity activity, final String errorMessage, final String alertTitle) {
     activity.runOnUiThread(new Runnable() {
       @Override
       public void run() {
-        showErrorMessage(activity, errorMessage, alertTitle);
+        showMessage(activity, errorMessage, alertTitle);
       }
     });
   }
 
-  public static void showErrorMessage(Activity activity, String errorMessage) {
-    showErrorMessage(activity, errorMessage, null);
+  public static void showMessage(Activity activity, String errorMessage) {
+    showMessage(activity, errorMessage, null);
   }
 
-  public static void showErrorMessage(Activity activity, String errorMessage, final String alertTitle) {
+  public static void showMessage(Activity activity, String errorMessage, final String alertTitle) {
     AlertDialog.Builder builder = new AlertDialog.Builder(activity);
     builder = builder.setMessage(errorMessage);
 
