@@ -255,21 +255,26 @@ public class PermissionsManager implements IPermissionsManager {
    * @param permission A value from {@link Manifest.permission}
    * @param callback The callback being called when determined if permission is granted or not.
    */
-  protected void requestPermissionFromUser(String permission, PermissionRequestCallback callback) {
+  protected void requestPermissionFromUser(final String permission, PermissionRequestCallback callback) {
     synchronized(pendingPermissionRequests) {
       if(pendingPermissionRequests.containsKey(permission)) { // there's already a pending requestPermissions() call for this permission -> don't ask again, add to pending permissions
         pendingPermissionRequests.get(permission).add(callback);
       }
       else {
-        int requestCode = nextRequestCode++;
+        final int requestCode = nextRequestCode++;
 
         List<PermissionRequestCallback> callbacksForPermission = new ArrayList<>();
         callbacksForPermission.add(callback);
         pendingPermissionRequests.put(permission, callbacksForPermission);
 
-        ActivityCompat.requestPermissions(activity,
-            new String[] { permission },
-            requestCode);
+        new Thread(new Runnable() {
+          @Override
+          public void run() {
+            ActivityCompat.requestPermissions(activity,
+                new String[] { permission },
+                requestCode);
+          }
+        }).start();
       }
     }
   }
