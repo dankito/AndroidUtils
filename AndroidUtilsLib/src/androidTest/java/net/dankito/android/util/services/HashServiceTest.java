@@ -25,14 +25,24 @@ public class HashServiceTest {
 
 
   @Test
-  public void hashString() throws Exception {
-    hashServiceTest.hashString();
+  public void hashString_Ascii() throws Exception {
+    hashServiceTest.hashString_Ascii();
+  }
+
+  @Test
+  public void hashString_Utf8() throws Exception {
+    hashServiceTest.hashString_Utf8();
   }
 
 
   @Test
-  public void hashStringToBytes() throws Exception {
-    hashServiceTest.hashStringToBytes();
+  public void hashStringToBytes_Ascii() throws Exception {
+    hashServiceTest.hashStringToBytes_Ascii();
+  }
+
+  @Test
+  public void hashStringToBytes_Utf8() throws Exception {
+    hashServiceTest.hashStringToBytes_Utf8();
   }
 
 }
