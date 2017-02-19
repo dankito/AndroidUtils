@@ -13,3 +13,19 @@ dependencies {
 
     testCompile 'junit:junit:4.12'
 }
+
+
+// to be able to reference test classes
+
+task testJar(type: Jar, dependsOn: testClasses) {
+    baseName = "test-${project.archivesBaseName}"
+    from sourceSets.test.output
+}
+
+configurations {
+    tests
+}
+
+artifacts {
+    tests testJar
+}
