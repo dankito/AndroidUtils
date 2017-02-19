@@ -17,7 +17,7 @@ public class AsyncProducerConsumerQueue<T> {
 
   public static final int WAITING_BEFORE_CONSUMING_ITEM_DISABLED = 0;
 
-  public static final int DEFAULT_MAX_ITEMS_TO_QUEUE = 100;
+  public static final int NO_LIMIT_ITEMS_TO_QUEUE = Integer.MAX_VALUE; // no limit
 
   private static final Logger log = LoggerFactory.getLogger(AsyncProducerConsumerQueue.class);
 
@@ -38,7 +38,7 @@ public class AsyncProducerConsumerQueue<T> {
   }
 
   public AsyncProducerConsumerQueue(int countThreadsToUse, ConsumerListener<T> consumerListener) {
-    this(countThreadsToUse, DEFAULT_MAX_ITEMS_TO_QUEUE, consumerListener);
+    this(countThreadsToUse, NO_LIMIT_ITEMS_TO_QUEUE, consumerListener);
   }
 
   public AsyncProducerConsumerQueue(int countThreadsToUse, int maxItemsToQueue, ConsumerListener<T> consumerListener) {
