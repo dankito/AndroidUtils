@@ -12,11 +12,16 @@ public class HashService {
 
 
   public String hashString(HashAlgorithm hashAlgorithm, String stringToHash) throws NoSuchAlgorithmException {
-    MessageDigest messageDigest = MessageDigest.getInstance(hashAlgorithm.getAlgorithmName());
-    messageDigest.update(stringToHash.getBytes(DIGEST_CHAR_SET));
+    return new String(hashStringToBytes(hashAlgorithm, stringToHash), DIGEST_CHAR_SET);
+  }
 
-    final byte byteData[] = messageDigest.digest();
-    return new String(byteData, DIGEST_CHAR_SET);
+  public byte[] hashStringToBytes(HashAlgorithm hashAlgorithm, String stringToHash) throws NoSuchAlgorithmException {
+    MessageDigest messageDigest = MessageDigest.getInstance(hashAlgorithm.getAlgorithmName());
+    byte[] stringToHashBytes = stringToHash.getBytes(DIGEST_CHAR_SET);
+
+    messageDigest.update(stringToHashBytes);
+
+    return messageDigest.digest();
   }
 
 }
