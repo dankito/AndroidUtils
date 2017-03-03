@@ -18,15 +18,27 @@ public class HexConverter {
     return bytes;
   }
 
+
   public String byteArrayToHexStringViaStringFormat(byte[] bytes) {
+    return byteArrayToHexStringViaStringFormat(bytes, "");
+  }
+
+  public String byteArrayToHexStringViaStringFormat(byte[] bytes, String bytesSeparator) {
+    if(bytesSeparator == null) {
+      bytesSeparator = "";
+    }
+
     StringBuilder stringBuilder = new StringBuilder();
 
     for (byte singleByte : bytes) {
-      stringBuilder.append(String.format("%02X", singleByte));
+      stringBuilder.append(String.format("%02X" + bytesSeparator, singleByte));
     }
+
+    stringBuilder.replace(stringBuilder.length() - bytesSeparator.length(), stringBuilder.length(), "");
 
     return stringBuilder.toString();
   }
+
 
   public static String byteArrayToHexString(byte[] bytes) {
     char[] hexChars = new char[bytes.length * 2];
